@@ -1,0 +1,37 @@
+﻿# @no-reject-unauthorized
+@MyRestApi_HostAddress = https://localhost:7257
+
+
+GET {{MyRestApi_HostAddress}}/api/cart
+
+?? status == 200
+
+###
+
+GET {{MyRestApi_HostAddress}}/api/cart/{id}
+{{
+  const { equal } = require('assert');
+  test('status code 200', () => {
+    equal(response.statusCode, 200);
+  });
+}}
+
+###
+
+PUT {{MyRestApi_HostAddress}}/api/cart
+Content-Type: application/json
+
+{
+  //Cart
+}
+
+###
+
+POST {{MyRestApi_HostAddress}}/api/product
+Content-Type: application/json
+
+{
+  //Product
+}
+
+###
