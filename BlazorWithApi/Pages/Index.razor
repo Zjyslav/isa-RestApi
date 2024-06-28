@@ -1,0 +1,86 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<button class="btn btn-primary"
+        @onclick="GetUserById">
+        Get user
+</button>
+
+@if (user is not null)
+{
+    <h3>Login: @user.Login</h3>
+    <p>Email: @user.Email</p>
+}
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="input-group my-2">
+                <label class="form-label mx-2">Login</label>
+                <input @bind="userToCreate.Login" class="form-control"/>
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">Email</label>
+                <input @bind="userToCreate.Email" class="form-control" />
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">FirstName</label>
+                <input @bind="userToCreate.FirstName" class="form-control" />
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">LastName</label>
+                <input @bind="userToCreate.LastName" class="form-control" />
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">Age</label>
+                <input @bind="userToCreate.Age" class="form-control" />
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">City</label>
+                <input @bind="userToCreate.City" class="form-control" />
+            </div>
+            <div class="input-group my-2">
+                <label class="form-label mx-2">Street</label>
+                <input @bind="userToCreate.Street" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <input type="button" class="btn btn-primary" @onclick="CreateUser" value="Create User" />
+</form>
+
+@if (responseMessage is not null)
+{
+    <h3>@responseMessage.StatusCode</h3>
+}
+
+@code {
+    private User? user;
+    private User userToCreate = new();
+
+    private HttpClient httpClient = new();
+
+    private HttpResponseMessage? responseMessage;
+
+    private async Task GetUserById()
+    {
+        user = await httpClient.GetFromJsonAsync<User>("https://localhost:7257/User/GetUserById/1");
+    }
+
+    private async Task CreateUser()
+    {
+        responseMessage = await httpClient.PostAsJsonAsync<User>("https://localhost:7257/User/AddUser", userToCreate);
+    }
+
+    public class User
+    {
+        public int Id { get; set; }
+        public string Login { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public int Age { get; set; }
+        public string City { get; set; } = "";
+        public string Street { get; set; } = "";
+    }
+}

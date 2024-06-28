@@ -1,0 +1,104 @@
+﻿@page "/products"
+@inject HttpClient httpClient
+
+<h3>Products</h3>
+
+<EditForm Model="@newProduct" class="my-2">
+    <div class="row my-2">
+        <div class="col-3">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-9">
+            <InputText @bind-Value="newProduct.Name" class="form-control"/>
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-3">
+            <label class="form-label">Description</label>
+        </div>
+        <div class="col-9">
+            <InputText @bind-Value="newProduct.Description" class="form-control" />
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-3">
+            <label class="form-label">SupplierId</label>
+        </div>
+        <div class="col-9">
+            <InputNumber @bind-Value="newProduct.SupplierId" class="form-control" />
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-3">
+            <label class="form-label">Price</label>
+        </div>
+        <div class="col-9">
+            <InputNumber @bind-Value="newProduct.Price" class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <input type="button" @onclick="CreateProduct" class="btn btn-primary" value="Create product"/>
+        </div>
+    </div>
+</EditForm>
+
+@if (response is not null)
+{
+    <p class="alert-success">@response.StatusCode</p>
+}
+
+<button @onclick="GetAllProducts" class="btn btn-success my-2">Get All Products</button>
+
+@foreach (Product product in products)
+{
+    <div class="my-2 py-2 border border-2">
+        <div class="row">
+            <div class="col-3">Id</div>
+            <div class="col-9">@product.Id</div>
+        </div>
+        <div class="row">
+            <div class="col-3">Name</div>
+            <div class="col-9">@product.Name</div>
+        </div>
+        <div class="row">
+            <div class="col-3">Description</div>
+            <div class="col-9">@product.Description</div>
+        </div>
+        <div class="row">
+            <div class="col-3">SupplierId</div>
+            <div class="col-9">@product.SupplierId</div>
+        </div>
+        <div class="row">
+            <div class="col-3">Price</div>
+            <div class="col-9">@product.Price</div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Product> products = new();
+
+    private Product newProduct = new();
+    private HttpResponseMessage? response = null;
+    private string url = "https://localhost:7257/api/Product";
+
+    private async Task CreateProduct()
+    {
+        response = await httpClient.PostAsJsonAsync<Product>(url, newProduct);
+    }
+
+    private async Task GetAllProducts()
+    {
+        products = await httpClient.GetFromJsonAsync<List<Product>>(url) ?? new();
+    }
+
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public int SupplierId { get; set; }
+        public decimal Price { get; set; }
+    }
+}
